@@ -96,8 +96,8 @@ public class BasicGameApp implements Runnable {
 	public void moveThings()
 	{
       //calls the move( ) code in the objects
-		paddle1.move();
-		paddle2.move();
+		paddle1.bounce();
+		paddle2.bounce();
 
 	}
 	

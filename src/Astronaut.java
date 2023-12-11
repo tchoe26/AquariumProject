@@ -44,6 +44,16 @@ public class Astronaut {
         ypos = ypos + dy;
  
     }
+    public void bounce() {
+       if (xpos<(width)||xpos>(1000-width)) {
+           dx = -dx;
+       }
+        if (ypos<0||ypos>(700-height)) {
+            dy = -dy;
+            System.out.println(ypos);
+        }
+        move();
+    }
 }
 
 
