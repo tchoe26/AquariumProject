@@ -17,7 +17,7 @@ import java.awt.image.BufferStrategy;
 import java.awt.*;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-
+import java.util.concurrent.TimeUnit;
 
 //*******************************************************************************
 // Class Definition Section
@@ -36,16 +36,24 @@ public class BasicGameApp implements Runnable {
 	public JFrame frame;
 	public Canvas canvas;
    public JPanel panel;
-   
+   public Color c = new Color (255, 255, 255);
+   public int scoreCounter1=0;
+   public String scoreCounterString1= "0";
+   public int scoreCounter2=0;
+   public String scoreCounterString2= "0";
 	public BufferStrategy bufferStrategy;
 	public Image paddle1Pic;
 	public Image paddle2Pic;
+	public Image PongBallPic;
 	public Image blackBackground;
 
    //Declare the objects used in the program
    //These are things that are made up of more than one variable type
 	private Astronaut paddle1;
 	private Astronaut paddle2;
+	private Astronaut pongBall;
+	public int paddle1Random;
+	public int paddle2Random;
 
 
    // Main method definition
@@ -67,10 +75,13 @@ public class BasicGameApp implements Runnable {
       //variable and objects
       //create (construct) the objects needed for the game and load up 
 		paddle1Pic = Toolkit.getDefaultToolkit().getImage("PongPaddle.png"); //load the picture
-		paddle1 = new Astronaut(600,100, 20, 100);
+		paddle1 = new Astronaut(960, (int) ((Math.random())*700), 10, 100, 0, 8);
 		paddle2Pic = Toolkit.getDefaultToolkit().getImage("PongPaddle.png");
-		paddle2 = new Astronaut(10,100, 20, 100);
+		paddle2 = new Astronaut(30, (int) ((Math.random())*700), 10, 100, 0, 8);
+		PongBallPic = Toolkit.getDefaultToolkit().getImage("PongBall-01.png");
+		pongBall = new Astronaut (400,400, 10, 10, 10, 10);
 		blackBackground = Toolkit.getDefaultToolkit().getImage("blackBackground.png");
+
 	}// BasicGameApp()
 
    
@@ -98,6 +109,37 @@ public class BasicGameApp implements Runnable {
       //calls the move( ) code in the objects
 		paddle1.bounce();
 		paddle2.bounce();
+		pongBall.bounce();
+
+		// pong ball bounces off paddles
+		if (pongBall.rec.intersects(paddle1.rec) || pongBall.rec.intersects(paddle2.rec)) {
+			pongBall.dx=-pongBall.dx;
+		}
+
+		//paddles switch direction randomly
+		paddle1Random = (int)(Math.random()*100);
+		paddle2Random = (int)(Math.random()*100);
+		if (paddle1Random==1) {
+			paddle1.dy = -paddle1.dy;
+			System.out.println("paddle 1 switch");
+		}
+		if (paddle2Random==1) {
+			paddle2.dy = -paddle2.dy;
+			System.out.println("paddle 2 switch");
+		}
+
+		if (pongBall.xpos > 990-pongBall.width) {
+			scoreCounter1++;
+			scoreCounterString1 = String.valueOf(scoreCounter1);
+			System.out.println(scoreCounterString1);
+			//TimeUnit.SECONDS.sleep(1);
+		}
+		if (pongBall.xpos < 10) {
+			scoreCounter1++;
+			scoreCounterString2 = String.valueOf(scoreCounter2);
+			System.out.println(scoreCounterString2);
+			//TimeUnit.SECONDS.sleep(1);
+		}
 
 	}
 	
@@ -150,8 +192,16 @@ public class BasicGameApp implements Runnable {
       //draw the image of the astronaut
 		g.drawImage(blackBackground, 0, 0, WIDTH, HEIGHT, null);
 		g.drawImage(paddle1Pic, paddle1.xpos, paddle1.ypos, paddle1.width, paddle1.height, null);
-		System.out.println(paddle1.xpos + " " + paddle1.ypos);
+		g.drawImage(PongBallPic, pongBall.xpos, pongBall.ypos, pongBall.width, pongBall.height, null);
 		g.drawImage(paddle2Pic, paddle2.xpos, paddle2.ypos, paddle2.width, paddle2.height, null);
+
+		//scoreboard
+
+		g.setFont(new Font("Ser", Font.PLAIN, 50));
+		g.setColor(c);
+		g.drawString(scoreCounterString1, 250, 50);
+		g.drawString(scoreCounterString2, 750, 50);
+
 
 		g.dispose();
 
