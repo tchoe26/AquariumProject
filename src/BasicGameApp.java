@@ -117,8 +117,8 @@ public class BasicGameApp implements Runnable {
 		}
 
 		//paddles switch direction randomly
-		paddle1Random = (int)(Math.random()*100);
-		paddle2Random = (int)(Math.random()*100);
+		paddle1Random = (int)(Math.random()*50);
+		paddle2Random = (int)(Math.random()*50);
 		if (paddle1Random==1) {
 			paddle1.dy = -paddle1.dy;
 			System.out.println("paddle 1 switch");
@@ -128,14 +128,14 @@ public class BasicGameApp implements Runnable {
 			System.out.println("paddle 2 switch");
 		}
 
-		if (pongBall.xpos > 990-pongBall.width) {
+		if (pongBall.xpos > 990) {
 			scoreCounter1++;
 			scoreCounterString1 = String.valueOf(scoreCounter1);
 			System.out.println(scoreCounterString1);
 			//TimeUnit.SECONDS.sleep(1);
 		}
 		if (pongBall.xpos < 10) {
-			scoreCounter1++;
+			scoreCounter2++;
 			scoreCounterString2 = String.valueOf(scoreCounter2);
 			System.out.println(scoreCounterString2);
 			//TimeUnit.SECONDS.sleep(1);
