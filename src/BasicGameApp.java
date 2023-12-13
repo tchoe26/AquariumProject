@@ -17,6 +17,7 @@ import java.awt.image.BufferStrategy;
 import java.awt.*;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 //*******************************************************************************
@@ -41,7 +42,9 @@ public class BasicGameApp implements Runnable {
    public String scoreCounterString1= "0";
    public int scoreCounter2=0;
    public String scoreCounterString2= "0";
+   public boolean isPowerUp1;
 	public BufferStrategy bufferStrategy;
+	public Image powerUp1Pic;
 	public Image paddle1Pic;
 	public Image paddle2Pic;
 	public Image PongBallPic;
@@ -52,8 +55,40 @@ public class BasicGameApp implements Runnable {
 	private Astronaut paddle1;
 	private Astronaut paddle2;
 	private Astronaut pongBall;
+	private Astronaut powerUp1;
 	public int paddle1Random;
 	public int paddle2Random;
+	public int powerUp1Random;
+
+	public void waitForPowerUp() {
+		//power up
+		if (isPowerUp1) {
+			if (pongBall.rec.intersects(powerUp1.rec)) {
+
+				System.out.println("power up trigger");
+				isPowerUp1 = false;
+			}
+
+		}
+		else {
+			powerUp1Random = (int)(Math.random()*500);
+			if (powerUp1Random == 1) {
+				isPowerUp1 = true;
+				System.out.println("power up appears");
+			}
+			waitForPowerUp();
+		}
+	}
+
+	//Pauses or sleeps the computer for the amount specified in milliseconds
+	public void pause(int time ){
+		//sleep
+		try {
+			Thread.sleep(time);
+		} catch (InterruptedException e) {
+
+		}
+	}
 
 
    // Main method definition
@@ -80,6 +115,8 @@ public class BasicGameApp implements Runnable {
 		paddle2 = new Astronaut(30, (int) ((Math.random())*700), 10, 100, 0, 8);
 		PongBallPic = Toolkit.getDefaultToolkit().getImage("PongBall-01.png");
 		pongBall = new Astronaut (400,400, 10, 10, 10, 10);
+		powerUp1Pic = Toolkit.getDefaultToolkit().getImage("lightningsymbol.jpg");
+		powerUp1 = new Astronaut ((int)((Math.random())*500)+100, ((int)((Math.random())*300)+50), 50, 50, 0, 0);
 		blackBackground = Toolkit.getDefaultToolkit().getImage("blackBackground.png");
 
 	}// BasicGameApp()
@@ -106,10 +143,14 @@ public class BasicGameApp implements Runnable {
 
 	public void moveThings()
 	{
+		waitForPowerUp();
+
       //calls the move( ) code in the objects
 		paddle1.bounce();
 		paddle2.bounce();
 		pongBall.bounce();
+
+
 
 		// pong ball bounces off paddles
 		if (pongBall.rec.intersects(paddle1.rec) || pongBall.rec.intersects(paddle2.rec)) {
@@ -132,26 +173,23 @@ public class BasicGameApp implements Runnable {
 			scoreCounter1++;
 			scoreCounterString1 = String.valueOf(scoreCounter1);
 			System.out.println(scoreCounterString1);
-			//TimeUnit.SECONDS.sleep(1);
+			pongBall.xpos = 500;
+			pongBall.ypos = 350;
+
 		}
 		if (pongBall.xpos < 10) {
 			scoreCounter2++;
 			scoreCounterString2 = String.valueOf(scoreCounter2);
 			System.out.println(scoreCounterString2);
-			//TimeUnit.SECONDS.sleep(1);
+			pongBall.xpos = 500;
+			pongBall.ypos = 350;
 		}
 
-	}
-	
-   //Pauses or sleeps the computer for the amount specified in milliseconds
-   public void pause(int time ){
-   		//sleep
-			try {
-				Thread.sleep(time);
-			} catch (InterruptedException e) {
 
-			}
-   }
+
+	}
+
+
 
    //Graphics setup method
    private void setUpGraphics() {
@@ -191,6 +229,9 @@ public class BasicGameApp implements Runnable {
 
       //draw the image of the astronaut
 		g.drawImage(blackBackground, 0, 0, WIDTH, HEIGHT, null);
+		if (isPowerUp1) {
+			g.drawImage(powerUp1Pic, powerUp1.xpos, powerUp1.ypos, powerUp1.width, powerUp1.height, null);
+		}
 		g.drawImage(paddle1Pic, paddle1.xpos, paddle1.ypos, paddle1.width, paddle1.height, null);
 		g.drawImage(PongBallPic, pongBall.xpos, pongBall.ypos, pongBall.width, pongBall.height, null);
 		g.drawImage(paddle2Pic, paddle2.xpos, paddle2.ypos, paddle2.width, paddle2.height, null);

@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.util.Scanner;
 
 /**
  * Created by chales on 11/6/2017.
@@ -57,9 +58,15 @@ public class Astronaut {
        if (!(xpos<(width)||xpos>(1000-width))) {
            isBouncing=false;
        }
-        if ((ypos<10||ypos>(690-height)) && !isBouncing) {
+        if ((ypos<0) && !isBouncing) {
             dy = -dy;
             System.out.println(ypos);
+            ypos=0;
+            isBouncing=true;
+        }
+        if (ypos>(690-height)) {
+            dy=-dy;
+            ypos = 690-height;
             isBouncing=true;
         }
         if (!(ypos<10||ypos>(690-height))) {
