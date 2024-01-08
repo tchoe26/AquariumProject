@@ -42,7 +42,7 @@ public class BasicGameApp implements Runnable {
    public String scoreCounterString1= "0";
    public int scoreCounter2=0;
    public String scoreCounterString2= "0";
-   public boolean isPowerUp1;
+   public boolean isPowerUp1 = false;
 	public BufferStrategy bufferStrategy;
 	public Image powerUp1Pic;
 	public Image paddle1Pic;
@@ -59,6 +59,8 @@ public class BasicGameApp implements Runnable {
 	public int paddle1Random;
 	public int paddle2Random;
 	public int powerUp1Random;
+	public int whoHitLast;
+
 
 	public void waitForPowerUp() {
 		//power up
@@ -66,17 +68,30 @@ public class BasicGameApp implements Runnable {
 			if (pongBall.rec.intersects(powerUp1.rec)) {
 
 				System.out.println("power up trigger");
+				if (whoHitLast ==2)
+					paddle2.height = paddle2.height*2;
+				if (whoHitLast ==1)
+					paddle1.height = paddle1.height*2;
 				isPowerUp1 = false;
 			}
+			System.out.println(pongBall.rec);
+			System.out.println(powerUp1.rec);
+
+
+			System.out.println("waiting to be hit");
 
 		}
 		else {
-			powerUp1Random = (int)(Math.random()*500);
+			powerUp1Random = (int)(Math.random()*50);
+			System.out.println(powerUp1Random);
 			if (powerUp1Random == 1) {
 				isPowerUp1 = true;
+				//powerUp1.xpos = (int)(Math.random()*900) +50;
+				//powerUp1.ypos = (int)(Math.random()*600) +50;
 				System.out.println("power up appears");
+				System.out.println(isPowerUp1);
 			}
-			waitForPowerUp();
+
 		}
 	}
 
@@ -116,7 +131,7 @@ public class BasicGameApp implements Runnable {
 		PongBallPic = Toolkit.getDefaultToolkit().getImage("PongBall-01.png");
 		pongBall = new Astronaut (400,400, 10, 10, 10, 10);
 		powerUp1Pic = Toolkit.getDefaultToolkit().getImage("lightningsymbol.jpg");
-		powerUp1 = new Astronaut ((int)((Math.random())*500)+100, ((int)((Math.random())*300)+50), 50, 50, 0, 0);
+		powerUp1 = new Astronaut ((int)(Math.random()*900)+50, ((int)(Math.random()*600)+50), 50, 50, (int)(Math.random()*5), (int)(Math.random()*5));
 		blackBackground = Toolkit.getDefaultToolkit().getImage("blackBackground.png");
 
 	}// BasicGameApp()
@@ -144,11 +159,16 @@ public class BasicGameApp implements Runnable {
 	public void moveThings()
 	{
 		waitForPowerUp();
+		if (pongBall.dx>0)
+			whoHitLast=2;
+		if (pongBall.dx<0)
+			whoHitLast=1;
 
       //calls the move( ) code in the objects
 		paddle1.bounce();
 		paddle2.bounce();
 		pongBall.bounce();
+		powerUp1.wrap();
 
 
 
@@ -169,6 +189,7 @@ public class BasicGameApp implements Runnable {
 			System.out.println("paddle 2 switch");
 		}
 
+		//scoring mechanism
 		if (pongBall.xpos > 990) {
 			scoreCounter1++;
 			scoreCounterString1 = String.valueOf(scoreCounter1);

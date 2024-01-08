@@ -50,6 +50,21 @@ public class Astronaut {
         ypos = ypos + dy;
         rec = new Rectangle(xpos, ypos, width, height);
     }
+    public void wrap() {
+        if ((xpos+width)<0) {
+            xpos=1000;
+        }
+        if (xpos>1000) {
+            xpos= -width;
+        }
+        if ((ypos+height)<0) {
+            ypos=700;
+        }
+        if (ypos>700) {
+            ypos = -height;
+        }
+        move();
+    }
     public void bounce() {
        if ((xpos<(width)||xpos>(1000-width)) && !isBouncing) {
            dx = -dx;
