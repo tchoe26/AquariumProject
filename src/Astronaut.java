@@ -66,7 +66,7 @@ public class Astronaut {
         move();
     }
     public void bounce() {
-       if ((xpos<(width)||xpos>(1000-width)) && !isBouncing) {
+       if ((xpos<0||xpos>(1000-width)) && !isBouncing) {
            dx = -dx;
            isBouncing=true;
        }
@@ -88,6 +88,13 @@ public class Astronaut {
             isBouncing = false;
         }
         move();
+    }
+
+
+    public void returnPaddle() {
+
+        //dont worry about the method i was trying to do something and it didn't work so now it's simple
+        ypos = 300;
     }
 }
 

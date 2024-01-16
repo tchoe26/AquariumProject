@@ -49,6 +49,8 @@ public class BasicGameApp implements Runnable {
 	public Image paddle2Pic;
 	public Image PongBallPic;
 	public Image blackBackground;
+	public Image winScreen1;
+	public Image winScreen2;
 
    //Declare the objects used in the program
    //These are things that are made up of more than one variable type
@@ -60,6 +62,7 @@ public class BasicGameApp implements Runnable {
 	public int paddle2Random;
 	public int powerUp1Random;
 	public int whoHitLast;
+	public int randomStartDirection;
 
 
 	public void waitForPowerUp() {
@@ -74,24 +77,23 @@ public class BasicGameApp implements Runnable {
 					paddle1.height = paddle1.height*2;
 				isPowerUp1 = false;
 			}
+
 			System.out.println(pongBall.rec);
 			System.out.println(powerUp1.rec);
-
-
 			System.out.println("waiting to be hit");
-
 		}
 		else {
-			powerUp1Random = (int)(Math.random()*50);
+			powerUp1Random = (int)(Math.random()*100);
 			System.out.println(powerUp1Random);
 			if (powerUp1Random == 1) {
 				isPowerUp1 = true;
-				//powerUp1.xpos = (int)(Math.random()*900) +50;
-				//powerUp1.ypos = (int)(Math.random()*600) +50;
+				powerUp1.xpos = (int)(Math.random()*900) +50;
+				powerUp1.ypos = (int)(Math.random()*600) +50;
+				powerUp1.dx = (int)(Math.random()*8)-4;
+				powerUp1.dy = (int)(Math.random()*8)-4;
 				System.out.println("power up appears");
 				System.out.println(isPowerUp1);
 			}
-
 		}
 	}
 
@@ -134,6 +136,8 @@ public class BasicGameApp implements Runnable {
 		powerUp1 = new Astronaut ((int)(Math.random()*900)+50, ((int)(Math.random()*600)+50), 50, 50, (int)(Math.random()*5), (int)(Math.random()*5));
 		blackBackground = Toolkit.getDefaultToolkit().getImage("blackBackground.png");
 
+		winScreen1 = Toolkit.getDefaultToolkit().getImage("winScreen1.png");
+		winScreen2 = Toolkit.getDefaultToolkit().getImage("winScreen2.png");
 	}// BasicGameApp()
 
    
@@ -196,19 +200,57 @@ public class BasicGameApp implements Runnable {
 			System.out.println(scoreCounterString1);
 			pongBall.xpos = 500;
 			pongBall.ypos = 350;
+			pongBall.dx=0;
+			pongBall.dy=0;
+			System.out.println("test 1");
 
+
+			paddle1.returnPaddle();
+			paddle2.returnPaddle();
+			System.out.println("test 2");
+			pongBall.dx=-10;
+			randomStartDirection = (int)(Math.random()*2);
+			if (randomStartDirection==1) {
+				pongBall.dy = 10;
+
+				System.out.println("test 3");
+			}
+			else {
+				pongBall.dy = -10;
+				System.out.println("test 3");
+			}
+			pause(1000);
 		}
-		if (pongBall.xpos < 10) {
+		if (pongBall.xpos < 0) {
 			scoreCounter2++;
 			scoreCounterString2 = String.valueOf(scoreCounter2);
 			System.out.println(scoreCounterString2);
 			pongBall.xpos = 500;
 			pongBall.ypos = 350;
+			System.out.println("test 1");
+			paddle1.returnPaddle();
+			paddle2.returnPaddle();
+			System.out.println("test 2");
+
+			randomStartDirection = (int)(Math.random()*2);
+			if (randomStartDirection==1) {
+				pongBall.dy = 10;
+
+				System.out.println("test 3");
+			}
+			else {
+				pongBall.dy = -10;
+
+				System.out.println("test 3");
+			}
+			pause(1000);
 		}
 
 
 
 	}
+
+
 
 
 
@@ -248,14 +290,22 @@ public class BasicGameApp implements Runnable {
 		Graphics2D g = (Graphics2D) bufferStrategy.getDrawGraphics();
 		g.clearRect(0, 0, WIDTH, HEIGHT);
 
-      //draw the image of the astronaut
-		g.drawImage(blackBackground, 0, 0, WIDTH, HEIGHT, null);
-		if (isPowerUp1) {
-			g.drawImage(powerUp1Pic, powerUp1.xpos, powerUp1.ypos, powerUp1.width, powerUp1.height, null);
+		if (scoreCounter1<10 && scoreCounter2<10){
+			//draw the image of the astronaut
+			g.drawImage(blackBackground, 0, 0, WIDTH, HEIGHT, null);
+			if (isPowerUp1) {
+				g.drawImage(powerUp1Pic, powerUp1.xpos, powerUp1.ypos, powerUp1.width, powerUp1.height, null);
+			}
+			g.drawImage(paddle1Pic, paddle1.xpos, paddle1.ypos, paddle1.width, paddle1.height, null);
+			g.drawImage(PongBallPic, pongBall.xpos, pongBall.ypos, pongBall.width, pongBall.height, null);
+			g.drawImage(paddle2Pic, paddle2.xpos, paddle2.ypos, paddle2.width, paddle2.height, null);
 		}
-		g.drawImage(paddle1Pic, paddle1.xpos, paddle1.ypos, paddle1.width, paddle1.height, null);
-		g.drawImage(PongBallPic, pongBall.xpos, pongBall.ypos, pongBall.width, pongBall.height, null);
-		g.drawImage(paddle2Pic, paddle2.xpos, paddle2.ypos, paddle2.width, paddle2.height, null);
+		if (scoreCounter1>=10) {
+			g.drawImage(winScreen1, 0,0, WIDTH, HEIGHT, null);
+		}
+		if (scoreCounter2>=10){
+			g.drawImage(winScreen2, 0,0, WIDTH, HEIGHT, null);
+		}
 
 		//scoreboard
 
