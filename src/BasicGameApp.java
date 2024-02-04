@@ -13,6 +13,8 @@
 
 //Graphics Libraries
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
 import java.awt.*;
 import javax.swing.JFrame;
@@ -23,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 //*******************************************************************************
 // Class Definition Section
 
-public class BasicGameApp implements Runnable {
+public class BasicGameApp implements Runnable, KeyListener {
 
    //Variable Definition Section
    //Declare the variables used in the program 
@@ -60,7 +62,7 @@ public class BasicGameApp implements Runnable {
 	private Astronaut powerUp1;
 	public int paddle1Random;
 	public int paddle2Random;
-	public int powerUp1Random;
+
 	public int whoHitLast;
 	public int randomStartDirection;
 
@@ -70,7 +72,7 @@ public class BasicGameApp implements Runnable {
 		if (isPowerUp1) {
 			if (pongBall.rec.intersects(powerUp1.rec)) {
 
-				System.out.println("power up trigger");
+				//System.out.println("power up trigger");
 				if (whoHitLast ==2)
 					paddle2.height = paddle2.height*2;
 				if (whoHitLast ==1)
@@ -78,21 +80,21 @@ public class BasicGameApp implements Runnable {
 				isPowerUp1 = false;
 			}
 
-			System.out.println(pongBall.rec);
-			System.out.println(powerUp1.rec);
-			System.out.println("waiting to be hit");
+			//System.out.println(pongBall.rec);
+			//System.out.println(powerUp1.rec);
+			//System.out.println("waiting to be hit");
 		}
 		else {
-			powerUp1Random = (int)(Math.random()*100);
-			System.out.println(powerUp1Random);
-			if (powerUp1Random == 1) {
+
+
+			if ((int)(Math.random()*500) == 1) {
 				isPowerUp1 = true;
 				powerUp1.xpos = (int)(Math.random()*900) +50;
 				powerUp1.ypos = (int)(Math.random()*600) +50;
 				powerUp1.dx = (int)(Math.random()*8)-4;
 				powerUp1.dy = (int)(Math.random()*8)-4;
-				System.out.println("power up appears");
-				System.out.println(isPowerUp1);
+				//System.out.println("power up appears");
+				//System.out.println(isPowerUp1);
 			}
 		}
 	}
@@ -127,13 +129,13 @@ public class BasicGameApp implements Runnable {
       //variable and objects
       //create (construct) the objects needed for the game and load up 
 		paddle1Pic = Toolkit.getDefaultToolkit().getImage("PongPaddle.png"); //load the picture
-		paddle1 = new Astronaut(960, (int) ((Math.random())*700), 10, 100, 0, 8);
+		paddle1 = new Astronaut(960, (int) ((Math.random())*700), 10, 100, 0, 8, 1);
 		paddle2Pic = Toolkit.getDefaultToolkit().getImage("PongPaddle.png");
-		paddle2 = new Astronaut(30, (int) ((Math.random())*700), 10, 100, 0, 8);
+		paddle2 = new Astronaut(30, (int) ((Math.random())*700), 10, 100, 0, 8,2);
 		PongBallPic = Toolkit.getDefaultToolkit().getImage("PongBall-01.png");
-		pongBall = new Astronaut (400,400, 10, 10, 10, 10);
+		pongBall = new Astronaut (400,400, 10, 10, 10, 10,3);
 		powerUp1Pic = Toolkit.getDefaultToolkit().getImage("lightningsymbol.jpg");
-		powerUp1 = new Astronaut ((int)(Math.random()*900)+50, ((int)(Math.random()*600)+50), 50, 50, (int)(Math.random()*5), (int)(Math.random()*5));
+		powerUp1 = new Astronaut ((int)(Math.random()*900)+50, ((int)(Math.random()*600)+50), 50, 50, (int)(Math.random()*5), (int)(Math.random()*5),4);
 		blackBackground = Toolkit.getDefaultToolkit().getImage("blackBackground.png");
 
 		winScreen1 = Toolkit.getDefaultToolkit().getImage("winScreen1.png");
@@ -160,8 +162,9 @@ public class BasicGameApp implements Runnable {
 	}
 
 
-	public void moveThings()
-	{
+	public void moveThings() {
+
+
 		waitForPowerUp();
 		if (pongBall.dx>0)
 			whoHitLast=2;
@@ -179,69 +182,78 @@ public class BasicGameApp implements Runnable {
 		// pong ball bounces off paddles
 		if (pongBall.rec.intersects(paddle1.rec) || pongBall.rec.intersects(paddle2.rec)) {
 			pongBall.dx=-pongBall.dx;
+
+			//add a bit of randomness to bounce
+			pongBall.dy=pongBall.dy+((int)(Math.random()*21)-10);
+			if (pongBall.dy <-20) {
+				pongBall.dy=-20;
+			}
+			if (pongBall.dy >20) {
+				pongBall.dy=20;
+			}
 		}
 
 		//paddles switch direction randomly
 		paddle1Random = (int)(Math.random()*50);
 		paddle2Random = (int)(Math.random()*50);
-		if (paddle1Random==1) {
+		/*if (paddle1Random==1) {
 			paddle1.dy = -paddle1.dy;
-			System.out.println("paddle 1 switch");
+			//System.out.println("paddle 1 switch");
 		}
 		if (paddle2Random==1) {
 			paddle2.dy = -paddle2.dy;
-			System.out.println("paddle 2 switch");
-		}
+			//System.out.println("paddle 2 switch");
+		}*/
 
 		//scoring mechanism
 		if (pongBall.xpos > 990) {
 			scoreCounter1++;
 			scoreCounterString1 = String.valueOf(scoreCounter1);
-			System.out.println(scoreCounterString1);
+			//System.out.println(scoreCounterString1);
 			pongBall.xpos = 500;
 			pongBall.ypos = 350;
 			pongBall.dx=0;
 			pongBall.dy=0;
-			System.out.println("test 1");
+			//System.out.println("test 1");
 
 
 			paddle1.returnPaddle();
 			paddle2.returnPaddle();
-			System.out.println("test 2");
+			//System.out.println("test 2");
 			pongBall.dx=-10;
 			randomStartDirection = (int)(Math.random()*2);
 			if (randomStartDirection==1) {
 				pongBall.dy = 10;
 
-				System.out.println("test 3");
+				//System.out.println("test 3");
 			}
 			else {
 				pongBall.dy = -10;
-				System.out.println("test 3");
+				//System.out.println("test 3");
 			}
 			pause(1000);
 		}
 		if (pongBall.xpos < 0) {
 			scoreCounter2++;
 			scoreCounterString2 = String.valueOf(scoreCounter2);
-			System.out.println(scoreCounterString2);
+			//System.out.println(scoreCounterString2);
 			pongBall.xpos = 500;
 			pongBall.ypos = 350;
-			System.out.println("test 1");
+			//System.out.println("test 1");
 			paddle1.returnPaddle();
 			paddle2.returnPaddle();
-			System.out.println("test 2");
+			//System.out.println("test 2");
 
 			randomStartDirection = (int)(Math.random()*2);
 			if (randomStartDirection==1) {
 				pongBall.dy = 10;
 
-				System.out.println("test 3");
+				//System.out.println("test 3");
 			}
 			else {
 				pongBall.dy = -10;
 
-				System.out.println("test 3");
+				//System.out.println("test 3");
 			}
 			pause(1000);
 		}
@@ -257,31 +269,32 @@ public class BasicGameApp implements Runnable {
    //Graphics setup method
    private void setUpGraphics() {
       frame = new JFrame("Application Template");   //Create the program window or frame.  Names it.
-   
+
       panel = (JPanel) frame.getContentPane();  //sets up a JPanel which is what goes in the frame
       panel.setPreferredSize(new Dimension(WIDTH, HEIGHT));  //sizes the JPanel
       panel.setLayout(null);   //set the layout
-   
+
       // creates a canvas which is a blank rectangular area of the screen onto which the application can draw
       // and trap input events (Mouse and Keyboard events)
-      canvas = new Canvas();  
+      canvas = new Canvas();
       canvas.setBounds(0, 0, WIDTH, HEIGHT);
       canvas.setIgnoreRepaint(true);
-   
+	  canvas.addKeyListener(this);
+
       panel.add(canvas);  // adds the canvas to the panel.
-   
+
       // frame operations
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  //makes the frame close and exit nicely
       frame.pack();  //adjusts the frame and its contents so the sizes are at their default or larger
       frame.setResizable(false);   //makes it so the frame cannot be resized
       frame.setVisible(true);      //IMPORTANT!!!  if the frame is not set to visible it will not appear on the screen!
-      
+
       // sets up things so the screen displays images nicely.
       canvas.createBufferStrategy(2);
       bufferStrategy = canvas.getBufferStrategy();
       canvas.requestFocus();
-      System.out.println("DONE graphic setup");
-   
+      //System.out.println("DONE graphic setup");
+
    }
 
 
@@ -318,5 +331,50 @@ public class BasicGameApp implements Runnable {
 		g.dispose();
 
 		bufferStrategy.show();
+
 	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		if (e.getKeyCode()==87) {
+			paddle2.paddleIsUp=true;
+		}
+		if (e.getKeyCode()==83) {
+			paddle2.paddleIsDown=true;
+		}
+		if (e.getKeyCode()==38) {
+			paddle1.paddleIsUp=true;
+		}
+		if (e.getKeyCode()==40) {
+			paddle1.paddleIsDown=true;
+		}
+
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		if (e.getKeyCode()==87) {
+			paddle2.paddleIsUp=false;
+		}
+		if (e.getKeyCode()==83) {
+			paddle2.paddleIsDown=false;
+		}
+		if (e.getKeyCode()==38) {
+			paddle1.paddleIsUp=false;
+		}
+		if (e.getKeyCode()==40) {
+			paddle1.paddleIsDown=false;
+		}
+
+
+	}
+
+
+
+
 }
