@@ -22,6 +22,8 @@ import javax.swing.JPanel;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
+import static java.lang.String.valueOf;
+
 //*******************************************************************************
 // Class Definition Section
 
@@ -53,6 +55,16 @@ public class BasicGameApp implements Runnable, KeyListener {
 	public Image blackBackground;
 	public Image winScreen1;
 	public Image winScreen2;
+	public Image objectPicture1;
+	public Image objectPicture2;
+	public Image objectPicture3;
+	public Image objectPicture4;
+	public Image objectPicture5;
+	public Image objectPicture6;
+	public Image objectPicture7;
+	public Image objectPicture8;
+	public Image objectPicture9;
+	public Image objectPicture10;
 
    //Declare the objects used in the program
    //These are things that are made up of more than one variable type
@@ -66,28 +78,28 @@ public class BasicGameApp implements Runnable, KeyListener {
 	public int whoHitLast;
 	public int randomStartDirection;
 
+	Astronaut[] tenObjects = new Astronaut[15];
+	Image[] tenObjectPictures = {objectPicture1, objectPicture2, objectPicture3,objectPicture4,objectPicture5,objectPicture6,objectPicture7,objectPicture8,objectPicture9,objectPicture10};
+
 
 	public void waitForPowerUp() {
 		//power up
 		if (isPowerUp1) {
 			if (pongBall.rec.intersects(powerUp1.rec)) {
 
-				//System.out.println("power up trigger");
-				if (whoHitLast ==2)
-					paddle2.height = paddle2.height*2;
-				if (whoHitLast ==1)
-					paddle1.height = paddle1.height*2;
-				isPowerUp1 = false;
-			}
+					//System.out.println("power up trigger");
+					if (whoHitLast == 2)
+						paddle2.height = paddle2.height * 2;
+					if (whoHitLast == 1)
+						paddle1.height = paddle1.height * 2;
+					isPowerUp1 = false;
+					
 
-			//System.out.println(pongBall.rec);
-			//System.out.println(powerUp1.rec);
-			//System.out.println("waiting to be hit");
+
+			}
 		}
 		else {
-
-
-			if ((int)(Math.random()*500) == 1) {
+			if ((int)(Math.random()*750) == 1) {
 				isPowerUp1 = true;
 				powerUp1.xpos = (int)(Math.random()*900) +50;
 				powerUp1.ypos = (int)(Math.random()*600) +50;
@@ -140,9 +152,17 @@ public class BasicGameApp implements Runnable, KeyListener {
 
 		winScreen1 = Toolkit.getDefaultToolkit().getImage("winScreen1.png");
 		winScreen2 = Toolkit.getDefaultToolkit().getImage("winScreen2.png");
+
+		//10 objects
+
+		for (int i=0; i<10; i++) {
+			Astronaut newObj = new Astronaut((int)(Math.random()*1000), (int)(Math.random()*700), 5, 5, ((int)(Math.random()*11))-5, ((int)(Math.random()*11))-5, i+4);
+			tenObjects[i] = newObj;
+			tenObjectPictures[i] = Toolkit.getDefaultToolkit().getImage("astronaut.png");
+		}
 	}// BasicGameApp()
 
-   
+
 //*******************************************************************************
 //User Method Section
 //
@@ -177,6 +197,9 @@ public class BasicGameApp implements Runnable, KeyListener {
 		pongBall.bounce();
 		powerUp1.wrap();
 
+		for (int i=0; i<10; i++) {
+			tenObjects[i].bounce();
+		}
 
 
 		// pong ball bounces off paddles
@@ -184,7 +207,7 @@ public class BasicGameApp implements Runnable, KeyListener {
 			pongBall.dx=-pongBall.dx;
 
 			//add a bit of randomness to bounce
-			pongBall.dy=pongBall.dy+((int)(Math.random()*21)-10);
+			pongBall.dy=pongBall.dy+((int)(Math.random()*17)-8);
 			if (pongBall.dy <-20) {
 				pongBall.dy=-20;
 			}
@@ -208,7 +231,7 @@ public class BasicGameApp implements Runnable, KeyListener {
 		//scoring mechanism
 		if (pongBall.xpos > 990) {
 			scoreCounter1++;
-			scoreCounterString1 = String.valueOf(scoreCounter1);
+			scoreCounterString1 = valueOf(scoreCounter1);
 			//System.out.println(scoreCounterString1);
 			pongBall.xpos = 500;
 			pongBall.ypos = 350;
@@ -232,10 +255,11 @@ public class BasicGameApp implements Runnable, KeyListener {
 				//System.out.println("test 3");
 			}
 			pause(1000);
+			isPowerUp1=false;
 		}
 		if (pongBall.xpos < 0) {
 			scoreCounter2++;
-			scoreCounterString2 = String.valueOf(scoreCounter2);
+			scoreCounterString2 = valueOf(scoreCounter2);
 			//System.out.println(scoreCounterString2);
 			pongBall.xpos = 500;
 			pongBall.ypos = 350;
@@ -256,6 +280,7 @@ public class BasicGameApp implements Runnable, KeyListener {
 				//System.out.println("test 3");
 			}
 			pause(1000);
+			isPowerUp1=false;
 		}
 
 
@@ -312,6 +337,10 @@ public class BasicGameApp implements Runnable, KeyListener {
 			g.drawImage(paddle1Pic, paddle1.xpos, paddle1.ypos, paddle1.width, paddle1.height, null);
 			g.drawImage(PongBallPic, pongBall.xpos, pongBall.ypos, pongBall.width, pongBall.height, null);
 			g.drawImage(paddle2Pic, paddle2.xpos, paddle2.ypos, paddle2.width, paddle2.height, null);
+
+			for (int i=0; i<10; i++) {
+				g.drawImage(tenObjectPictures[i], tenObjects[i].xpos, tenObjects[i].ypos, tenObjects[i].width, tenObjects[i].height, null);
+			}
 		}
 		if (scoreCounter1>=10) {
 			g.drawImage(winScreen1, 0,0, WIDTH, HEIGHT, null);
