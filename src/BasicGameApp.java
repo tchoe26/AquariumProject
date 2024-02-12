@@ -78,8 +78,9 @@ public class BasicGameApp implements Runnable, KeyListener {
 	public int whoHitLast;
 	public int randomStartDirection;
 
-	Astronaut[] tenObjects = new Astronaut[15];
-	Image[] tenObjectPictures = {objectPicture1, objectPicture2, objectPicture3,objectPicture4,objectPicture5,objectPicture6,objectPicture7,objectPicture8,objectPicture9,objectPicture10};
+	Astronaut[] tenObjects = new Astronaut[105];
+	Image tenObjectPicture = Toolkit.getDefaultToolkit().getImage("astronaut.png");
+	int numberOfAstronauts = 100;
 
 
 	public void waitForPowerUp() {
@@ -155,10 +156,10 @@ public class BasicGameApp implements Runnable, KeyListener {
 
 		//10 objects
 
-		for (int i=0; i<10; i++) {
+		for (int i=0; i<=numberOfAstronauts; i++) {
 			Astronaut newObj = new Astronaut((int)(Math.random()*1000), (int)(Math.random()*700), 5, 5, ((int)(Math.random()*11))-5, ((int)(Math.random()*11))-5, i+4);
 			tenObjects[i] = newObj;
-			tenObjectPictures[i] = Toolkit.getDefaultToolkit().getImage("astronaut.png");
+
 		}
 	}// BasicGameApp()
 
@@ -197,11 +198,19 @@ public class BasicGameApp implements Runnable, KeyListener {
 		pongBall.bounce();
 		powerUp1.wrap();
 
-		for (int i=0; i<10; i++) {
+		for (int i=0; i<numberOfAstronauts; i++) {
 			tenObjects[i].bounce();
 		}
 
-
+		//bounce off ball
+		for (int i=0; i<numberOfAstronauts; i++) {
+			if (tenObjects[i].rec.intersects(pongBall.rec)) {
+				tenObjects[i].dx=-tenObjects[i].dx;
+				tenObjects[i].dy=-tenObjects[i].dy;
+				tenObjects[i].width = tenObjects[i].width*2;
+				tenObjects[i].height = tenObjects[i].height*2;
+			}
+		}
 		// pong ball bounces off paddles
 		if (pongBall.rec.intersects(paddle1.rec) || pongBall.rec.intersects(paddle2.rec)) {
 			pongBall.dx=-pongBall.dx;
@@ -338,8 +347,8 @@ public class BasicGameApp implements Runnable, KeyListener {
 			g.drawImage(PongBallPic, pongBall.xpos, pongBall.ypos, pongBall.width, pongBall.height, null);
 			g.drawImage(paddle2Pic, paddle2.xpos, paddle2.ypos, paddle2.width, paddle2.height, null);
 
-			for (int i=0; i<10; i++) {
-				g.drawImage(tenObjectPictures[i], tenObjects[i].xpos, tenObjects[i].ypos, tenObjects[i].width, tenObjects[i].height, null);
+			for (int i=0; i<=numberOfAstronauts; i++) {
+				g.drawImage(tenObjectPicture, tenObjects[i].xpos, tenObjects[i].ypos, tenObjects[i].width, tenObjects[i].height, null);
 			}
 		}
 		if (scoreCounter1>=10) {
