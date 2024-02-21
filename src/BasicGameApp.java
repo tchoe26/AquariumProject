@@ -77,6 +77,8 @@ public class BasicGameApp implements Runnable, KeyListener {
 
 	public int whoHitLast;
 	public int randomStartDirection;
+	public boolean[][] cooldown;
+
 
 	Astronaut[] tenObjects = new Astronaut[105];
 	Image tenObjectPicture = Toolkit.getDefaultToolkit().getImage("astronaut.png");
@@ -201,14 +203,24 @@ public class BasicGameApp implements Runnable, KeyListener {
 		for (int i=0; i<numberOfAstronauts; i++) {
 			tenObjects[i].bounce();
 		}
-
+		cooldown = new boolean[numberOfAstronauts][numberOfAstronauts];
 		//bounce off ball
-		for (int i=0; i<numberOfAstronauts; i++) {
-			if (tenObjects[i].rec.intersects(pongBall.rec)) {
-				tenObjects[i].dx=-tenObjects[i].dx;
-				tenObjects[i].dy=-tenObjects[i].dy;
-				tenObjects[i].width = tenObjects[i].width*2;
-				tenObjects[i].height = tenObjects[i].height*2;
+		for (int h=0; h<numberOfAstronauts; h++) {
+			if (tenObjects[h].rec.intersects(pongBall.rec)) {
+				tenObjects[h].dx=-tenObjects[h].dx;
+				tenObjects[h].dy=-tenObjects[h].dy;
+				tenObjects[h].width = tenObjects[h].width*2;
+				tenObjects[h].height = tenObjects[h].height*2;
+			}
+			//intersect with other objects in the array
+			for (int z=0; z<numberOfAstronauts; z++) {
+				if (tenObjects[z].rec.intersects(tenObjects[h].rec)&& !(z ==h)) {
+					System.out.println("yes, "+ h +","+z);
+					tenObjects[h].dx*=2;
+					tenObjects[h].dy*=2;
+					tenObjects[z].dx*=2;
+					tenObjects[z].dy*=2;
+				}
 			}
 		}
 		// pong ball bounces off paddles
